@@ -14,7 +14,7 @@ class RockPaperScissors < Sinatra::Base
 
   post '/sign_in' do
     player_one_name = params[:player_one_name]
-    player_two_name = params[:player_two_name] || nil
+    player_two_name = params[:player_two_name]
     session[:game] = Game.new(players: [player_one_name, player_two_name])
     redirect '/weapons'
   end
