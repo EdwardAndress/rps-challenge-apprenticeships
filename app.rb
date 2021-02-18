@@ -2,11 +2,13 @@ require 'sinatra/base'
 require_relative './lib/game.rb'
 class RockPaperScissors < Sinatra::Base
 
-  enable :sessions
-
-  get '/test' do
-    'test page'
+  ['/weapons', '/outcome'].each do |path|
+    before path do
+      @game = session[:game]
+    end
   end
+
+  enable :sessions
 
   get '/' do
     erb :sign_in
@@ -20,15 +22,13 @@ class RockPaperScissors < Sinatra::Base
   end
   
   get '/weapons' do
-    game = session[:game]
-    @current_player = game.current_player
+    @current_player = @game.current_player
     erb :weapons
   end
 
   post '/weapons' do
-    game = session[:game]
-    game.player_weapon = params[:weapon]
-    if game.pending_weapon_choice?
+    @game.player_weapon = params[:weapon]
+    if @game.pending_weapon_choice?
       redirect '/weapons'
     else
       redirect '/outcome'
@@ -36,9 +36,8 @@ class RockPaperScissors < Sinatra::Base
   end
 
   get '/outcome' do
-    game = session[:game]
-    game.player_weapon = session[:weapon]
-    @outcome = session[:game].outcome
+    @game.player_weapon = session[:weapon]
+    @outcome = @game.outcome
     erb :outcome
   end
 
